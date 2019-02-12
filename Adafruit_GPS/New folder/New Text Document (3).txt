@@ -1,0 +1,38 @@
+/*----------------------------------------------------------------------**
+**     Haversine Formula                                                **
+** (from R. W. Sinnott, "Virtues of the Haversine," Sky and Telescope,  **
+** vol. 68, no. 2, 1984, p. 159):                                       **
+**                                                                      **
+**   dLon = lon2 - lon1                                                 **
+**   dLat = lat2 - lat1                                                 **
+**   a = (sin(dlat/2))^2 + cos(lat1) * cos(lat2) * (sin(dlon/2))^2      **
+**   c = 2 * atan2(sqrt(a), sqrt(1-a))                                  **
+**   d = R * c                                                          **
+**                                                                      **
+** will give mathematically and computationally exact results. The      **
+** intermediate result c is the great circle distance in radians. The   **
+** great circle distance d will be in the same units as R.              **
+**----------------------------------------------------------------------*/
+
+float calcDist(float CurrentLatitude, float CurrentLongitude, float SavedLatitude, float SavedLongitude)
+{
+// HaverSine version
+    const float Deg2Rad = 0.01745329252;               // (PI/180)  0.017453293, 0.0174532925
+    //const double EarthRadius = 6372.795;              //6372.7976 In Kilo meters, will scale to other values
+    const float EarthRadius = 20908120.1;              // In feet  20908128.6
+    float DeltaLatitude, DeltaLongitude, a, Distance;
+
+    // degrees to radians
+    CurrentLatitude = (CurrentLatitude + 180) * Deg2Rad;     // Remove negative offset (0-360), convert to RADS
+    CurrentLongitude = (CurrentLongitude + 180) * Deg2Rad;
+    SavedLatitude = (SavedLatitude + 180) * Deg2Rad;
+    SavedLongitude = (SavedLongitude + 180) * Deg2Rad;
+
+    DeltaLatitude = SavedLatitude - CurrentLatitude;
+    DeltaLongitude = SavedLongitude - CurrentLongitude;
+
+    a =(sin(DeltaLatitude/2) * sin(DeltaLatitude/2)) + cos(CurrentLatitude) * cos(SavedLatitude) * (sin(DeltaLongitude/2) * sin(DeltaLongitude/2));
+    Distance = EarthRadius * (2 * atan2(sqrt(a),sqrt(1-a)));
+
+    return(Distance);
+}
